@@ -1,0 +1,158 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://teametric.app/config.schema.json",
+  "title": "Teametric Configuration Schema",
+  "version": "1.0.0",
+  "description": "Configuration schema and default values for Teametric Apps Script.",
+  "type": "object",
+  "properties": {
+    "environment": {
+      "type": "string",
+      "enum": ["development", "staging", "production"],
+      "default": "development",
+      "description": "The current operating environment."
+    },
+    "loadOrder": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["base", "environment", "runtime"] },
+      "default": ["base", "environment", "runtime"],
+      "description": "Order in which configuration layers are applied."
+    },
+    "envOverrides": {
+      "type": "object",
+      "description": "Environment-specific configuration overrides.",
+      "propertyNames": {
+        "enum": ["development", "staging", "production"]
+      },
+      "additionalProperties": {
+        "type": "object",
+        "description": "Override values for the specified environment.",
+        "additionalProperties": true
+      }
+    },
+    "endpoints": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Unique identifier for the API route."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "The full endpoint URL."
+          },
+          "method": {
+            "type": "string",
+            "enum": ["GET", "POST", "PUT", "DELETE", "PATCH"],
+            "default": "GET",
+            "description": "HTTP method to use."
+          },
+          "headers": {
+            "type": "object",
+            "additionalProperties": { "type": "string" },
+            "description": "Optional HTTP headers."
+          },
+          "params": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Query parameters or POST payload."
+          },
+          "auth": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["none", "apiKey", "oauth2"],
+                "default": "none",
+                "description": "Authentication mechanism."
+              },
+              "tokenPropertyKey": {
+                "type": "string",
+                "description": "Script property key for storing API key or token."
+              }
+            },
+            "required": ["type"],
+            "additionalProperties": false,
+            "description": "Authentication configuration for the endpoint.",
+            "if": {
+              "properties": {
+                "type": { "enum": ["apiKey", "oauth2"] }
+              }
+            },
+            "then": {
+              "required": ["tokenPropertyKey"]
+            }
+          }
+        },
+        "required": ["name", "url"],
+        "additionalProperties": false
+      },
+      "description": "List of API endpoints to synchronize."
+    },
+    "schedule": {
+      "type": "object",
+      "properties": {
+        "interval": {
+          "type": "string",
+          "enum": ["hourly", "daily", "weekly"],
+          "default": "daily",
+          "description": "Preset scheduling interval."
+        },
+        "cron": {
+          "type": "string",
+          "pattern": "^([0-5]?\\d)\\s+([0-5]?\\d|\\*)\\s+([01]?\\d|2[0-3]|\\*)\\s+([1-9]|[12]\\d|3[01]|\\*)\\s+([1-9]|1[012]|\\*)\\s+([0-6]|\\*)$",
+          "description": "Custom cron expression for time-based triggers."
+        }
+      },
+      "required": ["interval"],
+      "additionalProperties": false,
+      "description": "Time-based trigger configuration."
+    },
+    "sheets": {
+      "type": "object",
+      "properties": {
+        "dataSheet": {
+          "type": "string",
+          "default": "Data",
+          "description": "Sheet name for synchronized data."
+        },
+        "logSheet": {
+          "type": "string",
+          "default": "Logs",
+          "description": "Sheet name for logging operations."
+        }
+      },
+      "required": ["dataSheet"],
+      "additionalProperties": false,
+      "description": "Spreadsheet sheet names for operations."
+    },
+    "features": {
+      "type": "object",
+      "properties": {
+        "enableLogging": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable detailed operational logging."
+        },
+        "userScoped": {
+          "type": "boolean",
+          "default": false,
+          "description": "Scope data operations per active user."
+        }
+      },
+      "additionalProperties": false,
+      "description": "Toggleable feature flags."
+    },
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Schema version."
+    }
+  },
+  "required": ["environment", "endpoints", "schedule", "sheets", "version"],
+  "additionalProperties": false
+}
