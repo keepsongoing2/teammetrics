@@ -1,0 +1,40 @@
+{
+  "name": "teemetric",
+  "version": "1.0.0",
+  "description": "Teametric: modular, configurable data synchronization and reporting entirely within a Google Sheets bound Apps Script",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run build && npm run deploy",
+    "build": "npm run lint",
+    "lint": "eslint .",
+    "test": "jest",
+    "deploy": "clasp push"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@google/clasp": "^2.5.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-org/teemetric.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/teemetric/issues"
+  },
+  "homepage": "https://github.com/your-org/teemetric#readme",
+  "author": "Your Name <you@example.com>",
+  "contributors": [],
+  "license": "MIT",
+  "keywords": [
+    "google-apps-script",
+    "google-sheets",
+    "data-sync",
+    "urlfetchapp",
+    "teametric"
+  ],
+  "engines": {
+    "node": ">=14"
+  }
+}
